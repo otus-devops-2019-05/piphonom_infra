@@ -2,6 +2,12 @@
 piphonom Infra repository
 
 ************
+
+bastion_IP = 35.210.212.166
+someinternalhost_IP = 10.132.0.3
+
+************
+
 To connect to someinternalhost in one command through the bastion host 
 you can use command:
 
@@ -26,4 +32,5 @@ Then you can connect to any internal host from sub net 10.132.0.*
 using command like:
 
 ssh 10.132.0.3
+
 ************

@@ -8,29 +8,27 @@ someinternalhost_IP = 10.132.0.3
 
 ************
 
-To connect to someinternalhost in one command through the bastion host 
-you can use command:
+testapp_IP = 104.155.83.151
+testapp_port = 9292
 
-ssh -i ~/.ssh/otusdevops otusdevops@10.132.0.3 -o ProxyCommand="ssh -W %h:%p -i ~/.ssh/otusdevops otusdevops@35.210.212.166"
+************
 
-where 35.210.212.166 is extarnal IP of bastion and
-10.132.0.3 is IP of someinternalhost.
+В простом случае startup_script объединяет содержимое всех bash скриптов.
 
-In more general case to connect to any internal host through bastion
-you can create file "~/.ssh/config" with the following content:
+Для выполнения startup_script.sh в момент создания инстанса нужно добавить
+опцию --metadata-from-file startup-script=/path/to/file:
 
-Host infrabastion
-  Hostname 35.210.212.166
-  User otusdevops
-  IdentityFile  ~/.ssh/otusdevops
-Host 10.132.0.*
-  IdentityFile  ~/.ssh/otusdevops
-  User otusdevops
-  ProxyCommand ssh -W %h:%p  otusdevops@infrabastion
+gcloud compute instances create reddit-app-2  --boot-disk-size=10GB \
+--image-family ubuntu-1604-lts --image-project=ubuntu-os-cloud \
+--machine-type=g1-small --tags puma-server --restart-on-failure \
+--metadata-from-file startup-script=./startup-script.sh
 
-Then you can connect to any internal host from sub net 10.132.0.*
-using command like:
+------------
 
-ssh 10.132.0.3
+Для создания правила файерволла через gcloud нужно выполнить:
+
+gcloud compute firewall-rules create default-puma-server --allow tcp:9292 \
+--direction INGRESS --source-ranges "0.0.0.0/0" --target-tags "puma-server" \
+--priority 1000
 
 ************
